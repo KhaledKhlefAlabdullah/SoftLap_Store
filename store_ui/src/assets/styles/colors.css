@@ -1,0 +1,41 @@
+:root {
+    --hero-rt-color:#1f2029;
+    --hero-rt-background-color:#bdbaa9;
+    --body-I-color: #ffeba7;
+    --body-I-color-a: #ffeaa79d;
+    --body-I-background-color: #1f2029;
+    --section-background-color: #2c2d36;
+    --inner-section-background-color: #3c3d41;
+    --bar-footer-background-color:#2c2929;
+    --link-I-hover-color: #c4c3ca;
+    --checkbox-I-switch-card:#020305;
+    --btn-I-color: #000000;
+    --background-I-img: url('../images/dark_mode.jpg');
+    --form-I-box-shadow: rgba(21,21,21,.2);
+    --card-I-background-color: #2b2e38;
+    --black:black;
+    --true-check:limegreen;
+    --error-check:red;
+    --error-bg:lightpink;
+  }
+  [data-theme="light"] {
+    --hero-rt-color:#aeb3df;
+    --hero-rt-background-color:#33322d;
+    --body-I-color: #333; 
+    --body-I-color-a: #3a38329d;
+    --body-I-background-color: #d9e7eb;
+    --section-background-color: #d4d8da;
+    --inner-section-background-color: #b4b6c0;
+    --link-I-hover-color: #555;
+    --checkbox-I-switch-card: #ccc;
+    --btn-I-color: #fff;
+    --background-I-img: url('../images/light_mode.jpg'); /* Use a light background image */
+    --form-I-box-shadow: rgba(0, 0, 0, 0.1);
+    --card-I-background-color: #fff;
+    --black:black;
+    --true-check:limegreen;
+    --error-check:red;
+    --error-bg:lightpink;
+  }
+  
+  

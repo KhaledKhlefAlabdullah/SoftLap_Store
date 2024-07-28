@@ -1,0 +1,9 @@
+@import "./side_product_menu_CART/cart_item_style.css";
+
+.color{
+    color: var(--body-I-color)!important;
+}
+
+.btn-agree{
+    color: var(----true-check)!important;
+}

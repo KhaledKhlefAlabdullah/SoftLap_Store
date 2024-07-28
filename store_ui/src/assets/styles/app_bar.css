@@ -1,0 +1,77 @@
+@import 'colors.css';
+@import './app_bar_components_style/search_box_style.css';
+@import './app_bar_components_style/menu_button.css';
+.app-bar{
+    height: 15vh;
+    width: 100%;
+    border-radius: 50px !important;
+}
+
+.align{
+    margin-left: auto;
+}
+
+.shop-btn {
+    width: 3.5rem !important;
+    height: 3rem;
+    position: relative;
+    background-color: rgba(255, 255, 255, 0) !important;
+    color: var(--body-I-color) !important;
+    border: none !important;
+    outline: none !important;
+}
+
+.shop-btn:active{
+    border: none !important;
+    outline: none !important;
+}
+
+.counter-shopping {
+    position: absolute;
+    color: white;
+    width: 1.5rem;
+    height: 1.5rem;
+    bottom: 0;
+    right: 0;
+    transform: translate(25%, 25%);
+}
+
+.logo {
+    display: flex;
+    width: 5rem;
+    height: auto;
+    color: var(--body-I-color);
+    border: none !important;
+    outline: none !important;
+}
+
+.btn-bar{
+    width: 2.5rem !important;
+    height: 2.5rem !important;
+}
+
+/* Search list style */
+.search-list{
+    z-index: 2!important;
+}
+
+.search-list ul{
+    list-style: none !important;
+}
+/**/
+@media (max-width: 991px) {
+    .nav-bar {
+        position: absolute !important;
+        z-index: 2!important;
+        display: flex;
+        left: 0;
+        top: 17vh;
+        flex-direction: column !important;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        border-radius: 10px;
+        background-color: var(--section-background-color);
+        backdrop-filter: blur(15px);
+    }
+}

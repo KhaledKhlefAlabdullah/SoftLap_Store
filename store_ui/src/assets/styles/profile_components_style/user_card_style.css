@@ -1,0 +1,6 @@
+.profile_img{
+    width: auto !important;
+    height: 15vw !important;
+    overflow: hidden;
+    border-radius: 10px !important;
+}

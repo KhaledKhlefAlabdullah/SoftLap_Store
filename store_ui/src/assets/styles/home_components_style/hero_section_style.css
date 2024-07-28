@@ -1,0 +1,175 @@
+
+.hero-sections {
+    display: flex;
+    flex-direction: column;
+    height: 40vh;
+    align-items: start;
+    justify-content: end;
+    padding: 1rem;
+    transition: transform 1s ease;
+}
+
+.hero-sections:hover .contant-d {
+    transform: scale(1.1);
+    padding: 5px;
+    margin-right: 10px;
+}
+.contant-d p{
+    overflow: hidden;
+}
+.hero-sections p {
+    color: var(--body-I-color-a);
+}
+
+.rt {
+    border-top-right-radius: 10px;
+    justify-content: start !important;
+}
+
+.hero-rt,
+.rt p {
+    background: var(--hero-rt-background-color);
+    color: var(--hero-rt-color);
+}
+
+.rt h3 {
+    color: var(--btn-I-color);
+}
+
+.lt {
+    border-top-left-radius: 10px;
+}
+
+
+
+
+
+.rb {
+    border-bottom-right-radius: 10px;
+}
+
+.lb {
+    border-bottom-left-radius: 10px;
+}
+
+.features {
+    display: grid !important;
+    grid-auto-flow: column;
+    grid-auto-columns: auto;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+}
+
+.features::-webkit-scrollbar {
+    height: 5px;
+}
+
+.features::-webkit-scrollbar-track {
+    background: var(--hero-rt-background-color);
+}
+
+.features::-webkit-scrollbar-track:hover {
+    background: var(--hero-rt-background-color);
+}
+
+.features::-webkit-scrollbar-thumb {
+    background: var(--hero-rt-color);
+    border-radius: 20px;
+}
+
+.hero-card {
+    width: 7rem !important;
+    height: 7rem !important;
+    perspective: 1000px;
+    background-color: var(--inner-section-background-color);
+    border-radius: 5px;
+    display: flex;
+    margin: .5rem;
+}
+
+.hero-card-face {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    backface-visibility: hidden;
+    /* Hide the back face of the card */
+    text-align: center;
+    font-size: 1rem;
+    padding: 5px;
+    transition: transform 0.5s;
+    /* Add a smooth rotation transition */
+    border-radius: 5px;
+
+}
+
+.hero-card-front {
+    color: var(--body-I-color);
+}
+.hero-card-front i{
+    font-size: 2.5rem;
+    position: absolute;
+    bottom: 1.5rem;
+    left: 2rem;
+}
+.hero-card-back {
+    transform: rotateY(180deg);
+    /* Initially hide the back face */
+    overflow-y: auto;
+    background: var(--inner-section-background-color);
+
+}
+.hero-card-back p{
+    background: none;
+    color: var(--body-I-color-a);
+}
+.hero-card-back::-webkit-scrollbar {
+    width: 5px;
+}
+
+.hero-card-back::-webkit-scrollbar-track {
+    background: var(--inner-section-background-color);
+}
+
+.hero-card-back::-webkit-scrollbar-thumb {
+    background: var(--section-background-color);
+    border-radius: 20px;
+}
+
+.hero-card:hover .hero-card-front {
+    transform: rotateY(-180deg);
+    /* Rotate to show the back face on hover */
+}
+
+.hero-card:hover .hero-card-back {
+    transform: rotateY(0deg);
+    /* Rotate to show the front face on hover */
+}
+
+
+@media(max-width:990px) {
+
+    .rt {
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .lt {
+        border-top-left-radius: 0px;
+    }
+
+    .rb {
+        border-bottom-right-radius: 0px;
+    }
+
+    .lb {
+        border-bottom-left-radius: 10px;
+    }
+
+    .lb-c {
+        border-bottom-right-radius: 10px;
+    }
+}
