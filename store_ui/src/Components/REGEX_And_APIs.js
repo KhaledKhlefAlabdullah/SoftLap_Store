@@ -12,7 +12,7 @@ export const REGISTER = `${SERVER_PATH}api/register`;
 
 export const LOGOUT = `${SERVER_PATH}api/logout`;
 
-export const CATEGORIES_PRODUCTS = `${SERVER_PATH}api/products`;
+export const CATEGORIES_PRODUCTS = `${SERVER_PATH}api/bproducts`;
 
 export const GET_USERS = `${SERVER_PATH}api/users`;
 
@@ -31,3 +31,5 @@ export const DELETE_PRODUCT_FROM_ORDER = `${SERVER_PATH}api/delete-order-details
 export const DELETE_ORDER = `${SERVER_PATH}api/delete-order/`;
 
 export const EDITE_ORDER = `${SERVER_PATH}api/edit-order-detail`;
+
+export const SIMILAR_PRODUCTS = '';

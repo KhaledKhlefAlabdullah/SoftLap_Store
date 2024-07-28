@@ -37,3 +37,4 @@ def get_product_by_id(db: Session, product_id: int):
             "rating": product.rating,
         }
     return None
+

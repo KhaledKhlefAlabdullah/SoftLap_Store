@@ -18,7 +18,7 @@ export default function Products_Section() {
       const response = await axios.get(CATEGORIES_PRODUCTS, {
         headers: {
           "Content-Type": "application/json",
-          Accept: "application/json",
+          "Accept": "application/json",
         },
       });
       console.log(response);
