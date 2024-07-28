@@ -23,7 +23,8 @@ class User extends Authenticatable
         'email',
         'password',
         'profile',
-        'user_type'
+        'user_type',
+        'cluster'
     ];
 
 
@@ -57,8 +58,4 @@ class User extends Authenticatable
         return $this->belongsTo(Country::class, 'country_id');
     }
 
-    public function cluster(): BelongsTo
-    {
-        return $this->belongsTo(Cluster::class, 'cluster_id');
-    }
 }

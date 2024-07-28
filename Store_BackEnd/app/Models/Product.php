@@ -25,12 +25,7 @@ class Product extends Model
         'price',
         'rating'
     ];
-
-    public function cluster(): BelongsTo
-    {
-        return $this->belongsTo(Cluster::class, 'cluster_id');
-    }
-
+    
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
