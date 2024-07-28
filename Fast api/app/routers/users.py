@@ -4,7 +4,7 @@ import app.crud as crud, app.models as models, app.schemas as schemas
 from app.database import SessionLocal
 
 router = APIRouter(
-    prefix="/users",
+    prefix="/api/users",
     tags=["users"],
 )
 
