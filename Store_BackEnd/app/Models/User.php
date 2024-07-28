@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -12,23 +14,19 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    // Set primary key data type : string
-    protected $keyType = 'string';
+    protected $table = 'users';
 
-    // Set incrementing : false
-    public $incrementing = false;
-
-    // Set id as primary key
-    protected $primaryKey ='id';
-
-    // The object attribute
     protected $fillable = [
-        'id',
+        'country_id',
+        'cluster_id',
         'name',
         'email',
-        'profile_img',
         'password',
+        'profile',
+        'user_type'
     ];
+
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -47,15 +45,20 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
+        'user_type' => 'string'
     ];
 
-    public function bankeCard(){
-        return $this->hasOne(BankeCard::class);
+
+    public function orders(): HasMany{
+        return $this->hasMany(Order::class, 'user_id');
     }
-    public function roles(){
-        return $this->belongsToMany(Role::class,'user_roles', 'user_id', 'role_id');
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(Country::class, 'country_id');
     }
-    public function orders(){
-        return $this->hasMany(Orders::class);
+
+    public function cluster(): BelongsTo
+    {
+        return $this->belongsTo(Cluster::class, 'cluster_id');
     }
 }

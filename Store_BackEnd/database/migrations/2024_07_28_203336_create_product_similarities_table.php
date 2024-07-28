@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('categories', function (Blueprint $table) {
+        Schema::create('product_similarities', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description');
-            $table->bigInteger('product_quantity_in_category')->default(0);
+            $table->foreignId('product1_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('product2_id')->constrained('users')->onDelete('cascade');
+            $table->float('similarity');
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('catigories');
+        Schema::dropIfExists('product_similarities');
     }
 };

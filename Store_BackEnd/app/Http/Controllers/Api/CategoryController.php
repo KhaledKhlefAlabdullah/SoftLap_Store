@@ -22,12 +22,7 @@ class CategoryController extends Controller
         try {
 
             // Get all catigories
-            $categories = DB::table('categories')->select(
-                'id',
-                'category_name as name',
-                'category_description as desc',
-                'product_quantity_in_category as p_quantity',
-                )->get();
+            $categories = Category::all();
 
             // Check if there are products
             if ($categories->isEmpty()) {
@@ -61,15 +56,15 @@ class CategoryController extends Controller
 
             // Validate inputs
             $request->validate([
-                'category_name' => ['required', 'string', 'max:10'],
-                'category_description' => ['nullable', 'string', 'max:1000'],
+                'name' => ['required', 'string', 'max:10'],
+                'description' => ['nullable', 'string', 'max:1000'],
             ]);
 
             // Create category
             $category = Category::create([
                 'id' => Hash::make(now()->toString()),
-                'category_name' => $request->category_name,
-                'category_description' => $request->category_description
+                'name' => $request->category_name,
+                'description' => $request->category_description
             ]);
 
             //Check if category created
@@ -85,6 +80,7 @@ class CategoryController extends Controller
 
         }catch (Exception $e){
             return response()->json([
+                'error' => $e->getMessage(),
                 'message' => __('database connection error')
             ], 500);
         }

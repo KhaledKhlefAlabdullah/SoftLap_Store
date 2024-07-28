@@ -6,22 +6,16 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductRating extends Model
+class ProductImage extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_ratings';
+    protected $table = 'product_images';
 
     protected $fillable = [
-        'user_id',
         'product_id',
-        'rating'
+        'image'
     ];
-
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function product(): BelongsTo
     {

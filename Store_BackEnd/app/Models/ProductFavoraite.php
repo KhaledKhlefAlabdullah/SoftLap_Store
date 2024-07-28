@@ -1,21 +1,22 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductRating extends Model
+class ProductFavoraite extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_ratings';
+    protected $table = 'product_favoratings';
 
     protected $fillable = [
         'user_id',
         'product_id',
-        'rating'
+        'favorate'
     ];
 
     public function user(): BelongsTo

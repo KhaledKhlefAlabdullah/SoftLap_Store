@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\Globale;
-use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Carbon\Carbon;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -48,15 +46,10 @@ class AuthenticatedSessionController extends Controller
             // create new token
             $token = $user->createToken('login_token',['*'],$expiresAt);
 
-            // Get User roles
-            $roles_ob=$user->roles()->get();
-            $getRoles = new Globale();
-            $roles = $getRoles->get_user_Roles($roles_ob);
-
             return response()->json([
                 'token' => $token->plainTextToken,
                 'user' =>$user,
-                'roles'=>$roles,
+                'roles'=>$user->user_type,
                 'message' => __('login successfully')
             ], 200);
         }

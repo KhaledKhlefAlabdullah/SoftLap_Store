@@ -135,7 +135,7 @@ export default function App_Bar() {
           {auth_context.auth.token ? (
             <>
               <Nav.Link to="/Profile" as={NavLink}>
-                {!auth_context.auth.roles.includes("admin")
+                {!auth_context.auth.user_type === "admin"
                   ? "الملف الشخصي"
                   : "لوحة التحكم"}
               </Nav.Link>

@@ -14,22 +14,26 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
+            $table->id();
+            $table->foreignId('country_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('cluster_id')->nullable()->constrained()->onDelete('set null'); // Make cluster_id nullable
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->string('profile_img')->nullable()->default('images/profile_images/user.png');
-            $table->rememberToken();
+            $table->string('profile')->nullable();
+            $table->enum('user_type', ['admin', 'customer']);
             $table->timestamps();
         });
 
-        $password=password_hash('adminManager@1',PASSWORD_DEFAULT);
+        $password=Hash::make('adminManager@1');
         DB::table('users')->insert([
-            'id'=>Hash::make('Admin Manager'),
+            'id'=>1,
+            'country_id' => 1,
+            'cluster_id' => 1,
             'name'=>'admin',
             'email'=>'adminManager@gmail.com',
             'password'=>$password,
+            'user_type' => 'admin',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

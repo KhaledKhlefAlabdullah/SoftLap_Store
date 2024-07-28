@@ -4,29 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Category extends Model
 {
     use HasFactory;
 
-    // Set primary key data type : string
-    protected $keyType = 'string';
+    protected $table = 'categories';
 
-    // Set incrementing : false
-    public $incrementing = false;
-
-    // Set id as primary key
-    protected $primaryKey ='id';
-
-    // The object attribute
-    protected $fillable=[
-        'id',
-        'category_name',
-        'category_description',
-        'product_quantity_in_category'
+    protected $fillable = [
+        'name',
+        'description',
     ];
-    public function products()
-    {
-        return $this->hasMany(Product::class);
+
+    public function products(): HasMany{
+        return $this->hasMany(Product::class, 'category_id');
     }
 }

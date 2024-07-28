@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\Order_details;
-use App\Models\Orders;
+use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\OrderDetail;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Mockery\Exception;
@@ -24,19 +26,31 @@ class OrdersController extends Controller
         // Handling the process
         try {
             // Get all categories
-            $orders = DB::table('users')
-                    ->join('orders','users.id','=','orders.user_id')
-                    ->join('order_details','orders.id','=','order_details.order_id')
-                    ->join('products','order_details.product_id','=','products.id')
-                    ->select('orders.id','orders.title','orders.total_price as total'
-                        ,'users.name as user_name','products.product_name','order_details.quantity','order_details.unit_price','order_details.total_price')->get();
+            $userId = Auth::id(); // Replace with the actual user ID
 
-            // Check if there are products
-            if ($orders->isEmpty()) {
-                return response()->json([
-                    'message' => __('No categories found'),
-                ], 404); // Use an appropriate HTTP status code for no data found
+            $user = User::with([
+                'orders.OrderDetail.product' // Eager load orders, order details, and products
+            ])->find($userId);
+
+            if (!$user) {
+                // Handle the case where the user is not found
+                return response()->json(['message' => 'User not found'], 404);
             }
+
+            // Transform the data as needed
+            $orders = $user->orders->map(function ($order) {
+                return $order->OrderDetail->map(function ($orderDetail) use ($order) {
+                    return [
+                        'order_id' => $order->id,
+                        'order_title' => $order->title, // Ensure this field exists in the 'orders' table
+                        'order_total_price' => $order->total_price,
+                        'product_name' => $orderDetail->product->product_name,
+                        'quantity' => $orderDetail->quantity,
+                        'unit_price' => $orderDetail->product->product_price,
+                        'total_price' => $orderDetail->total_price,
+                    ];
+                });
+            })->flatten(1);
 
             // Return products
             return response()->json([
@@ -56,19 +70,17 @@ class OrdersController extends Controller
      * Get specific orders in database
      * @return JsonResponse all orders in database
      */
-    public function get_order(Request $request)
+    public function get_order(Request $request, string $id)
     {
         // Handling the process
         try {
 
-            $id = $request->id;
-
             // Get all categories
-            $order = Orders::findOrFail($id);
-            $order_details = Order_details::where('order_id',$id)->with('product')->get();
+            $order = Order::findOrFail($id);
+            $OrderDetail = OrderDetail::where('order_id',$id)->with('product')->get();
 
             // Check if there are products
-            if (!$order_details || !$order) {
+            if (!$OrderDetail || !$order) {
                 return response()->json([
                     'message' => __('No categories found'),
                 ], 404); // Use an appropriate HTTP status code for no data found
@@ -77,7 +89,7 @@ class OrdersController extends Controller
             // Return products
             return response()->json([
                 'order' => $order,
-                'order_details'=>$order_details,
+                'OrderDetail'=>$OrderDetail,
                 'message' => __('Successfully retrieved order'),
             ], 200);
 
@@ -94,15 +106,13 @@ class OrdersController extends Controller
      * @param string id is user is=d
      * @return JsonResponse all orders belonges to on user in database
      */
-    public function user_orders(Request $request){
+    public function user_orders(Request $request, string $id){
 
         // Handling the process
         try {
 
-            $id = $request->id;
-
             // Get all categories
-            $orders = Orders::where('user_id', $id)->get();
+            $orders = Order::where('user_id', $id)->get();
 
             // Check if there are products
             if ($orders->isEmpty()) {
@@ -139,7 +149,7 @@ class OrdersController extends Controller
             ]);
 
             // Create order
-            $order = Orders::create([
+            $order = Order::create([
                 'id' => str_replace('/', '', Hash::make(now())),
                 'title' => $request->title,
                 'user_id' => $request->user_id,
@@ -159,7 +169,7 @@ class OrdersController extends Controller
             // Add order details
             foreach ($products_in_order as $product){
                 $product['order_id'] = $order->id;
-                $this->add_order_details($product);
+                $this->add_OrderDetail($product);
             }
 
             return response()->json([
@@ -175,7 +185,7 @@ class OrdersController extends Controller
      * @param array $order_detaile order detail data
      * @return JsonResponse
      */
-    public function add_order_details(array $order_detaile){
+    public function add_OrderDetail(array $order_detaile){
         // Handling the process
         try {
             // Validate inputs
@@ -194,7 +204,7 @@ class OrdersController extends Controller
             $total_price = $order_detaile['quantity'] * $unit_price;
 
             // Create order details
-            $order_detail = Order_details::create([
+            $order_detail = OrderDetail::create([
                 'id' => str_replace('/', '', Hash::make(now())),
                 'product_id' => $order_detaile['product_id'],
                 'order_id' => $order_detaile['order_id'],
@@ -211,7 +221,7 @@ class OrdersController extends Controller
             }
 
             // Get the order to update total salary
-            $order = Orders::findOrFail($order_detail->order_id);
+            $order = Order::findOrFail($order_detail->order_id);
 
             $new_total_price = $order->total_price +  $total_price;
 
@@ -253,7 +263,7 @@ class OrdersController extends Controller
             $id = $request->id;
 
             // Get the order or return a 404 response if not found
-            $order_detail = Order_details::findOrFail($id);
+            $order_detail = OrderDetail::findOrFail($id);
 
             // Edite order details with inputs
             $order_detail->quantity = $request->quantity;
@@ -293,7 +303,7 @@ class OrdersController extends Controller
 
             $id = $request->id;
 
-            $product_order = Order_details::findOrFail($id);
+            $product_order = OrderDetail::findOrFail($id);
 
             $product_order->delete();
 
@@ -320,7 +330,7 @@ class OrdersController extends Controller
 
             $id = $request->id;
 
-            $order = Orders::findOrFail($id);
+            $order = Order::findOrFail($id);
 
             $order->delete();
 

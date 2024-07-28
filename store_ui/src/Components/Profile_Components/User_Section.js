@@ -1,5 +1,5 @@
-import { Button, Card, Container, Row } from "react-bootstrap";
-import { useContext, useState } from "react";
+import { Container, Row } from "react-bootstrap";
+import { useContext } from "react";
 import { SERVER_PATH } from "../REGEX_And_APIs";
 import Loader from "../Loader";
 import Profile_Nave from "./Profile_Nave";

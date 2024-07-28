@@ -1,48 +1,53 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Nette\Utils\Image;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
 {
     use HasFactory;
 
-    // Set primary key data type : string
-    protected $keyType = 'string';
+    protected $table = 'products';
 
-    // Set incrementing : false
-    public $incrementing = false;
-
-    // Set id as primary key
-    protected $primaryKey ='id';
-
-    // The object attribute
-    protected $fillable=[
-        'id',
+    protected $fillable = [
+        'cluster_id',
+        'user_id',
+        'company_id',
         'category_id',
-        'product_name',
-        'product_description',
-        'quantity',
+        'name',
+        'description',
+        'face_image',
         'price',
-        'product_img'
+        'rating'
     ];
 
-    public function orders(){
-        return $this->belongsToMany(Orders::class,'order_details','product_id','order_id');
-    }
-    public function category()
+    public function cluster(): BelongsTo
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Cluster::class, 'cluster_id');
     }
 
-    public function images(){
-        return $this->hasMany(Product_images::class);
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function order_details(){
-        return $this->hasMany(Order_details::class);
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class, 'company_id');
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class,'category_id');
+    }
+
+    public function orderDetails(): HasMany
+    {
+        return $this->hasMany(OrderDetail::class, 'product_id');
     }
 }

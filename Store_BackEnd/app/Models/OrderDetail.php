@@ -1,30 +1,32 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class ProductRating extends Model
+class OrderDetail extends Model
 {
     use HasFactory;
 
-    protected $table = 'product_ratings';
+    protected $table = 'order_details';
 
     protected $fillable = [
-        'user_id',
+        'order_id',
         'product_id',
-        'rating'
+        'product_price',
+        'quantity'
     ];
 
-    public function user(): BelongsTo
+    public function order(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function product(): BelongsTo
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class, 'product_id');
     }
 }

@@ -85,7 +85,7 @@ class ProductRating(Base):
     product_id = Column(Integer, ForeignKey('products.id'))
     rating = Column(Float)
 
-class ProductFavorite(Base):
+class ProductFavoraite(Base):
     __tablename__ = 'product_favoratings'
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey('users.id'))

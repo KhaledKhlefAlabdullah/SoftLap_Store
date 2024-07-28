@@ -24,23 +24,10 @@ class ProductController extends Controller
         try {
 
             // Get all catigories
-            $categories = DB::table('categories')->select(
-                'id',
-                'category_name as name',
-                'category_description as desc',
-                'product_quantity_in_category as p_quantity',
-            )->get();
-
+            $categories = Category::all();
 
             // Get all products
-            $products = DB::table('products')->select(
-                'id',
-                        'category_id as c_id',
-                        'product_name as name',
-                        'product_description as desc',
-                        'quantity',
-                        'price',
-                        'product_img as img')->get();
+            $products = Product::all();
 
             // Check if there are products
             if ($products->isEmpty()) {
@@ -206,20 +193,14 @@ class ProductController extends Controller
                 $request->file('img')->move(public_path($path),$file_name);
                 $img=str_replace('\\', '/', $path).'/'.$file_name;
             }
-            // Create new prodict
-            $product_img = Product_images::create([
-                'id'=>str_replace('/', '', Hash::make(now())),
-                'product_id' =>$request->product_id,
-                'img_name' =>rand(),
-                'img_src'=>$img
-            ]);
-            // Check if create success
-            if(!$product_img){
 
-                return response()->json([
-                    'message'=>__('created failed')
-                ],550);
-            }
+            // // Check if create success
+            // if(!$product_img){
+
+            //     return response()->json([
+            //         'message'=>__('created failed')
+            //     ],550);
+            // }
 
             return response()->json([
                 'message'=>__('created successfully')

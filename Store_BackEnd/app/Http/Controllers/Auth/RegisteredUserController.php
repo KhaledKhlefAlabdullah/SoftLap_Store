@@ -40,7 +40,6 @@ class RegisteredUserController extends Controller
         ]);
         // create user with inputs
         $user = User::create([
-            'id' => Hash::make(now()->toString()),
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
@@ -64,14 +63,11 @@ class RegisteredUserController extends Controller
             //return the token
 
             // Get User roles
-            $roles_ob=$user->roles()->get();
-            $getRoles = new Globale();
-            $roles = $getRoles->get_user_Roles($roles_ob);
 
             return response()->json([
                 'token'=>$token->plainTextToken,
                 'user'=>$user,
-                'roles'=>$roles,
+                'roles'=>$user->user_type,
                 'message'=>__('success')
             ],  200);
         }

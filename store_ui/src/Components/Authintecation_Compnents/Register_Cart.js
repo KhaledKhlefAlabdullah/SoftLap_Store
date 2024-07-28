@@ -139,6 +139,7 @@ export default function Register_Cart() {
         } else {
         }
     } catch (error) {
+      alert(error)
       if (!error.response) {
         setError("No Server Response");
       } else if (error.response?.status === 409) {
