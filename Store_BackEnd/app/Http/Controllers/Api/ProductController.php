@@ -60,9 +60,11 @@ class ProductController extends Controller
             // Get all products
             $product = Product::with('images')->findOrFail($id);
 
+            $related_products = Product::where('cluster', $product->cluster)->get();
             // Return products
             return response()->json([
                 'product' => $product,
+                'related_products' => $related_products,
                 'message' => __('Successfully retrieved products'),
             ], 200);
         } catch (Exception $e) {
@@ -137,18 +139,18 @@ class ProductController extends Controller
                 $product_img = $path . '/' . $file_name;
             }
 
-            // // Call FastAPI to get the cluster prediction
-            // $response = $client->post('http://127.0.0.1:8080/products/predict/', [
-            //     'json' => ['text' => $request->description]
-            // ]);
+            // Call FastAPI to get the cluster prediction
+            $response = $client->post('http://127.0.0.1:8080/products/predict/', [
+                'json' => ['text' => $request->description]
+            ]);
 
-            // $prediction = json_decode($response->getBody()->getContents(), true);
-            // $cluster = $prediction['cluster'];
-
+            $prediction = json_decode($response->getBody()->getContents(), true);
+            $cluster = $prediction['cluster'];
+            // return $cluster;
             // Create new product
             $product = Product::create([
                 'user_id' => Auth::id(),
-                // 'cluster' => $cluster,
+                'cluster' => $cluster,
                 'company_id' => $request->company_id,
                 'category_id' => $request->category_id,
                 'name' => $request->name,
