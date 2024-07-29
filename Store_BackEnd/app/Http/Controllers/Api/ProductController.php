@@ -60,9 +60,11 @@ class ProductController extends Controller
             // Get all products
             $product = Product::with('images')->findOrFail($id);
 
+            $related_products = Product::where('cluster', $product->cluster)->get();
             // Return products
             return response()->json([
                 'product' => $product,
+                'related_products' => $related_products,
                 'message' => __('Successfully retrieved products'),
             ], 200);
         } catch (Exception $e) {
