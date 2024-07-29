@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -13,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cluster_id')->nullable()->constrained()->onDelete('set null');
+            $table->string('cluster')->nullable();
             $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null'); // Make user_id nullable
             $table->foreignId('company_id')->nullable()->constrained()->onDelete('set null');
             $table->foreignId('category_id')->nullable()->constrained()->onDelete('set null');

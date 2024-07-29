@@ -15,7 +15,7 @@ class Product extends Model
     protected $table = 'products';
 
     protected $fillable = [
-        'cluster_id',
+        'cluster',
         'user_id',
         'company_id',
         'category_id',
@@ -25,11 +25,6 @@ class Product extends Model
         'price',
         'rating'
     ];
-
-    public function cluster(): BelongsTo
-    {
-        return $this->belongsTo(Cluster::class, 'cluster_id');
-    }
 
     public function user(): BelongsTo
     {

@@ -1,23 +1,28 @@
-import pandas as pd
+import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
-import joblib
+import pandas as pd
+from sqlalchemy import create_engine
 
-from app import crud
+# إعداد اتصال SQLAlchemy
+DATABASE_URL = "mysql+mysqlconnector://root:@localhost/softlapstoredb"
+engine = create_engine(DATABASE_URL)
 
-kmeans = joblib.load('kmeans_model.pkl')
-tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
+# قراءة البيانات
+df = pd.read_sql("SELECT id, name, description FROM products", engine)
 
-def train_model(num_clusters):
-    # إعادة تدريب النموذج مع عدد التجمعات المطلوب
-    product_contents = crud.get_all_product_contents(db)
-    documents = [content for _, content in product_contents]
-    tfidf_matrix = tfidf_vectorizer.transform(documents)
-    kmeans = KMeans(n_clusters=num_clusters, random_state=42)
-    kmeans.fit(tfidf_matrix)
-    return kmeans
+# إعداد TF-IDF وKMeans
+tfidf_vectorizer = TfidfVectorizer()
+tfidf_matrix = tfidf_vectorizer.fit_transform(df['description'])
 
-def predict_cluster(new_text, kmeans):
-    new_text_tfidf = tfidf_vectorizer.transform([new_text])
-    cluster = kmeans.predict(new_text_tfidf)
-    return cluster[0]
+num_clusters = 2
+kmeans = KMeans(n_clusters=num_clusters, random_state=42)
+kmeans.fit(tfidf_matrix)
+
+# إضافة النتائج إلى DataFrame
+df['cluster'] = kmeans.labels_
+df['cluster'] = df['cluster'].astype(int)
+
+# حفظ النماذج
+joblib.dump(tfidf_vectorizer, 'tfidf_vectorizer.pkl')  # قم بتحديث المسار وفقًا لموقع الحفظ
+joblib.dump(kmeans, 'kmeans_model.pkl')  # قم بتحديث المسار وفقًا لموقع الحفظ

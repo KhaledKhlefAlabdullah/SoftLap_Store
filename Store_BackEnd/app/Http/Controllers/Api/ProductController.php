@@ -8,9 +8,9 @@ use App\Models\Product;
 use App\Models\Product_images;
 use Illuminate\Http\Request;
 use \Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Mockery\Exception;
+use GuzzleHttp\Client;
 
 class ProductController extends Controller
 {
@@ -38,11 +38,11 @@ class ProductController extends Controller
 
             // Return products
             return response()->json([
-                'categories'=>$categories,
+                'categories' => $categories,
                 'products' => $products,
                 'message' => __('Successfully retrieved products'),
             ], 200);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'message' => __('database connection error')
             ], 500);
@@ -65,7 +65,7 @@ class ProductController extends Controller
                 'product' => $product,
                 'message' => __('Successfully retrieved products'),
             ], 200);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'message' => __('database connection error')
             ], 500);
@@ -95,7 +95,7 @@ class ProductController extends Controller
                 'products' => $products,
                 'message' => __('Successfully retrieved products'),
             ], 200);
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'message' => __('database connection error')
             ], 500);
@@ -107,66 +107,84 @@ class ProductController extends Controller
      * @param Request $request the product data
      * @return JsonResponse
      */
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
         // Validate inputs
         $request->validate([
-            'category_id' => ['required', 'string','exists:categories,id'],
-            'product_name' => ['required', 'string', 'max:255'],
-            'product_description' => ['nullable', 'string', 'max:1000'],
+            'category_id' => ['required', 'exists:categories,id'],
+            'company_id' => ['required', 'exists:companies,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'description' => ['nullable', 'string', 'max:1000'],
             'quantity' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0.01'],
-            'product_img' => ['required','image','mimes:jpeg,png,gif,bmp']
+            // 'face_img' => ['required', 'image', 'mimes:jpeg,png,gif,bmp']
         ]);
+        // Initialize Guzzle client
+        $client = new Client();
 
         // Handling the process
         try {
+
             // To store product image path
-            $product_img=null;
+            $product_img = null;
             // Handle the image upload if provided
-            if($request->hasFile('product_img')){
-                $file_extension=$request->file('product_img')->getClientOriginalExtension();
-                $file_name=rand().'.'.$file_extension;
-                $path='images\\product_image';
-                $request->file('product_img')->move(public_path($path),$file_name);
-                $product_img=str_replace('\\', '/', $path).'/'.$file_name;
+            if ($request->hasFile('face_image')) {
+                $file_extension = $request->file('face_image')->getClientOriginalExtension();
+                $file_name = rand() . '.' . $file_extension;
+                $path = 'images/face_image';
+                $request->file('face_img')->move(public_path($path), $file_name);
+                $product_img = $path . '/' . $file_name;
             }
-            // Create new prodict
+
+            // // Call FastAPI to get the cluster prediction
+            // $response = $client->post('http://127.0.0.1:8080/products/predict/', [
+            //     'json' => ['text' => $request->description]
+            // ]);
+
+            // $prediction = json_decode($response->getBody()->getContents(), true);
+            // $cluster = $prediction['cluster'];
+
+            // Create new product
             $product = Product::create([
-                'id'=>str_replace('/', '', Hash::make(now())),
+                'user_id' => Auth::id(),
+                // 'cluster' => $cluster,
+                'company_id' => $request->company_id,
                 'category_id' => $request->category_id,
-                'product_name' =>$request->product_name,
-                'product_description' =>$request->product_description,
+                'name' => $request->name,
+                'description' => $request->description,
                 'quantity' => $request->quantity,
-                'price'=>$request->price,
-                'product_img'=>$product_img
+                'price' => $request->price,
+                'face_img' => $product_img
             ]);
+
+
             // Check if create success
-            if(!$product){
+            if (!$product) {
 
                 return response()->json([
-                    'message'=>__('created failed')
-                ],550);
+                    'message' => __('created failed')
+                ], 550);
             }
 
             // Get the category of product
-            $category=Category::findOrFail($product->category_id);
+            $category = Category::findOrFail($product->category_id);
             // Update the product quantity  in the category
-            $category->product_quantity_in_category=$category->product_quantity_in_category+1;
+            $category->product_quantity_in_category = $category->product_quantity_in_category + 1;
 
-            $state=$category->save();
+            $state = $category->save();
 
-            if(!$state){
+            if (!$state) {
                 return response()->json([
-                    'message'=>__('failed update product quantity in category')
-                ],200);
+                    'message' => __('failed update product quantity in category')
+                ], 200);
             }
 
             return response()->json([
-                'message'=>__('created successfully')
-            ],200);
+                'message' => __('created successfully')
+            ], 200);
 
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'message' => __('database connection error')
             ], 500);
@@ -174,24 +192,25 @@ class ProductController extends Controller
 
     }
 
-    public function add_images(Request $request){
+    public function add_images(Request $request)
+    {
         // Validate inputs
         $request->validate([
-            'product_id' => ['required', 'string','exists:products,id'],
-            'img' => ['required','image','mimes:jpeg,png,gif,bmp']
+            'product_id' => ['required', 'string', 'exists:products,id'],
+            'img' => ['required', 'image', 'mimes:jpeg,png,gif,bmp']
         ]);
 
         // Handling the process
         try {
             // To store product image path
-            $img=null;
+            $img = null;
             // Handle the image upload if provided
-            if($request->hasFile('img')){
-                $file_extension=$request->file('img')->getClientOriginalExtension();
-                $file_name=rand().'.'.$file_extension;
-                $path='images\\img';
-                $request->file('img')->move(public_path($path),$file_name);
-                $img=str_replace('\\', '/', $path).'/'.$file_name;
+            if ($request->hasFile('img')) {
+                $file_extension = $request->file('img')->getClientOriginalExtension();
+                $file_name = rand() . '.' . $file_extension;
+                $path = 'images\\img';
+                $request->file('img')->move(public_path($path), $file_name);
+                $img = str_replace('\\', '/', $path) . '/' . $file_name;
             }
 
             // // Check if create success
@@ -203,10 +222,10 @@ class ProductController extends Controller
             // }
 
             return response()->json([
-                'message'=>__('created successfully')
-            ],200);
+                'message' => __('created successfully')
+            ], 200);
 
-        }catch (Exception $e){
+        } catch (Exception $e) {
             return response()->json([
                 'message' => __('database connection error')
             ], 500);
@@ -229,7 +248,7 @@ class ProductController extends Controller
         $search_items = Product::where(function ($query) use ($search_input) {
 
             // If product name contianes  {$searchTerm} return it
-            $query->where('product_name','LIKE',"%$search_input%")
+            $query->where('product_name', 'LIKE', "%$search_input%")
 
                 // Or if product description contianes  {$searchTerm} return it
                 ->orWhere('product_description', 'LIKE', "%$search_input");
@@ -240,16 +259,16 @@ class ProductController extends Controller
             })
             ->get();
 
-        if (!$search_items){
+        if (!$search_items) {
             return response()->json([
-                'message'=>__('there no data')
-            ],404);
+                'message' => __('there no data')
+            ], 404);
         }
 
         return response()->json([
             'resulte' => $search_items,
             'message' => __('items found')
-        ],200);
+        ], 200);
     }
 
 }
