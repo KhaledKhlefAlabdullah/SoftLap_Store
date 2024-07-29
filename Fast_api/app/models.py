@@ -5,14 +5,16 @@ from app.database import Base
 class User(Base):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True, index=True)
-    country_id = Column(Integer, ForeignKey('countries.id'))
-    cluster_id = Column(Integer, ForeignKey('clusters.id'))
+    country_id = Column(Integer, ForeignKey('countries.id'), nullable=True)
+    cluster_id = Column(Integer, ForeignKey('clusters.id'), nullable=True)
     name = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, nullable=False)
     password = Column(String(255), nullable=False)
-    profile = Column(String(255))
+    profile = Column(String(255), nullable=True)
     user_type = Column(Enum('admin', 'customer'))
+    is_active = Column(Boolean, default=True)  
 
+    
 class Country(Base):
     __tablename__ = 'countries'
     id = Column(Integer, primary_key=True, index=True)
