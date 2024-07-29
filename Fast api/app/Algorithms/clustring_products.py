@@ -2,31 +2,27 @@ import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.cluster import KMeans
 import pandas as pd
-import mysql.connector
+from sqlalchemy import create_engine
 
-# إعداد اتصال بقاعدة البيانات
-mydb = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="",
-    database="softlapstoredb"
-)
+# إعداد اتصال SQLAlchemy
+DATABASE_URL = "mysql+mysqlconnector://root:@localhost/softlapstoredb"
+engine = create_engine(DATABASE_URL)
 
-# قراءة بيانات المنتجات من قاعدة البيانات
-df = pd.read_sql("SELECT id, name, description FROM products", mydb)
+# قراءة البيانات
+df = pd.read_sql("SELECT id, name, description FROM products", engine)
 
-# تجهيز TF-IDF وتحليل التكتلات
+# إعداد TF-IDF وKMeans
 tfidf_vectorizer = TfidfVectorizer()
 tfidf_matrix = tfidf_vectorizer.fit_transform(df['description'])
 
 num_clusters = 2
 kmeans = KMeans(n_clusters=num_clusters, random_state=42)
 kmeans.fit(tfidf_matrix)
-df['cluster'] = kmeans.labels_
 
-# تحويل عمود التكتل إلى نوع int القياسي
+# إضافة النتائج إلى DataFrame
+df['cluster'] = kmeans.labels_
 df['cluster'] = df['cluster'].astype(int)
 
-# حفظ النموذج والنموذج TF-IDF إلى ملفات
-joblib.dump(tfidf_vectorizer, 'tfidf_vectorizer.pkl')
-joblib.dump(kmeans, 'kmeans_model.pkl')
+# حفظ النماذج
+joblib.dump(tfidf_vectorizer, 'tfidf_vectorizer.pkl')  # قم بتحديث المسار وفقًا لموقع الحفظ
+joblib.dump(kmeans, 'kmeans_model.pkl')  # قم بتحديث المسار وفقًا لموقع الحفظ
