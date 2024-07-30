@@ -13,6 +13,7 @@ import Shopping_Provider from "./Context/Shopping_Cart_Context";
 import Product_Details from "./Pages/Product_Details";
 import { Theme_Provider } from "./Context/Change_Theme_Context";
 import Order_Details from "./Components/Profile_Components/Order_Details";
+import AddProductForm from "./Pages/AddProduct";
 function App() {
   return (
     <Container className="pt-1 pb-1">
@@ -26,6 +27,7 @@ function App() {
           <Route path="product-details/:id" element={<Product_Details />} />
           <Route path="order-details/:id" element={<Order_Details />} />
           <Route path="Login-Register" element={<Login_Register />} />
+          <Route path="/add-product" element={<AddProductForm />} />
         </Routes>
       </div>
       <Footer />

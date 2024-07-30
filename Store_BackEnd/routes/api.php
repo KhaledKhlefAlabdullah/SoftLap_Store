@@ -6,6 +6,8 @@ use \App\Http\Controllers\Api\UsersController;
 use \App\Http\Controllers\Api\ProductController;
 use \App\Http\Controllers\Api\CategoryController;
 use \App\Http\Controllers\Api\OrdersController;
+use App\Http\Controllers\CompanyController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -19,42 +21,46 @@ use \App\Http\Controllers\Api\OrdersController;
 
 Route::middleware(['auth:sanctum'])->group(function () {
 
-    Route::get('users',[UsersController::class,'index'])->name('users')->middleware('admin');
+    Route::get('users', [UsersController::class, 'index'])->name('users')->middleware('admin');
 
-    Route::post('add-product',[ProductController::class,'store'])->name('add-product');
+    Route::post('add-product', [ProductController::class, 'store'])->name('add-product');
 
-    Route::post('add-image',[ProductController::class,'add_images'])->name('add-image');
+    Route::post('add-image', [ProductController::class, 'add_images'])->name('add-image');
 
-    Route::post('add-category',[CategoryController::class,'store'])->name('add-category');
+    Route::post('add-category', [CategoryController::class, 'store'])->name('add-category');
 
-    Route::get('get-orders-and-details',[OrdersController::class,'index'])->name('get-orders-and-details')->middleware('admin');
+    Route::get('get-orders-and-details', [OrdersController::class, 'index'])->name('get-orders-and-details')->middleware('admin');
 
-    Route::get('get-order',[OrdersController::class,'get_order'])->name('get-order');
+    Route::get('get-order', [OrdersController::class, 'get_order'])->name('get-order');
 
-    Route::post('create-order',[OrdersController::class,'create_order'])->name('create-order');
+    Route::post('create-order', [OrdersController::class, 'create_order'])->name('create-order');
 
-    Route::post('add-order-detail',[OrdersController::class,'add_order_details'])->name('add-order-detail');
+    Route::post('add-order-detail', [OrdersController::class, 'add_order_details'])->name('add-order-detail');
 
-    Route::post('edit-order-detail',[OrdersController::class,'update_order_detail'])->name('edit-order-detail');
+    Route::post('edit-order-detail', [OrdersController::class, 'update_order_detail'])->name('edit-order-detail');
 
-    Route::get('user-orders',[OrdersController::class,'user_orders'])->name('user-orders');
+    Route::get('user-orders', [OrdersController::class, 'user_orders'])->name('user-orders');
 
-    Route::delete('delete-order-details',[OrdersController::class,'remove_product_from_order'])->name('delete-order-details');
+    Route::delete('delete-order-details', [OrdersController::class, 'remove_product_from_order'])->name('delete-order-details');
 
-    Route::delete('delete-order',[OrdersController::class,'remove_order'])->name('delete-order');
+    Route::delete('delete-order', [OrdersController::class, 'remove_order'])->name('delete-order');
+
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories');
+
+    Route::get('companies', [CompanyController::class, 'index'])->name('companies');
 
 });
 
-Route::get('products',[ProductController::class,'index'])->name('products');
+Route::get('products', [ProductController::class, 'index'])->name('products');
 
-Route::post('products/add',[ProductController::class,'store'])->name('add-product');
+Route::post('products/add', [ProductController::class, 'store'])->name('add-product');
 
-Route::get('product-details/{id}',[ProductController::class,'product_details'])->name('product-details');
+Route::get('product-details/{id}', [ProductController::class, 'product_details'])->name('product-details');
 
-Route::get('product-search',[ProductController::class,'search_process'])->name('product-search');
+Route::get('product-search', [ProductController::class, 'search_process'])->name('product-search');
 
-Route::get('products_by_category',[ProductController::class,'category_products'])->name('products_by_category');
+Route::get('products_by_category', [ProductController::class, 'category_products'])->name('products_by_category');
 
-Route::get('categories',[CategoryController::class,'index'])->name('categories');
+Route::get('categories', [CategoryController::class, 'index'])->name('categories');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

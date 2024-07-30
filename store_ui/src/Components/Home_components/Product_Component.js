@@ -6,7 +6,7 @@ import { Shopping_Context } from "../../Context/Shopping_Cart_Context";
 import { Auth_Context } from "../../Context/Auth_Context";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function Product({ desc, id, img, name, price, quantity }) {
+export default function Product({ desc, id, face_image, name, price, quantity }) {
   // Use navigation to redirect to login page if not logged in
   const navigate = useNavigate();
 
@@ -29,7 +29,7 @@ export default function Product({ desc, id, img, name, price, quantity }) {
       <Container className="product-card my-box-shadow p-1 rounded-lg">
         <Container className="imgs-container img-container-product">
           <img
-            src={SERVER_PATH.concat(img)}
+            src={SERVER_PATH.concat(face_image)}
             alt={`Product ${name}`}
             className="imgs"
           />

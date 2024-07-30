@@ -61,10 +61,13 @@ class ProductController extends Controller
             $product = Product::with('images')->findOrFail($id);
 
             $related_products = Product::where('cluster', $product->cluster)->get();
+
+            $product_images = $product->images()->get();
             // Return products
             return response()->json([
                 'product' => $product,
                 'related_products' => $related_products,
+                'imgs' =>$product_images,
                 'message' => __('Successfully retrieved products'),
             ], 200);
         } catch (Exception $e) {
@@ -78,12 +81,12 @@ class ProductController extends Controller
      * this function to get all products in database
      * @return JsonResponse product
      */
-    public function category_products(Request $request)
+    public function category_products(Request $request, $id)
     {
         // Handling the process
         try {
             // Get all products
-            $products = Product::firstOrFail('category_Id', $request->id)->get();
+            $products = Product::firstOrFail('category_id', $id)->get();
 
             // Check if there are products
             if (empty($products)) {
@@ -120,7 +123,7 @@ class ProductController extends Controller
             'description' => ['nullable', 'string', 'max:1000'],
             'quantity' => ['required', 'integer', 'min:1'],
             'price' => ['required', 'numeric', 'min:0.01'],
-            // 'face_img' => ['required', 'image', 'mimes:jpeg,png,gif,bmp']
+            'face_image' => ['nullable', 'image', 'mimes:jpeg,png,gif,bmp']
         ]);
         // Initialize Guzzle client
         $client = new Client();
@@ -135,7 +138,7 @@ class ProductController extends Controller
                 $file_extension = $request->file('face_image')->getClientOriginalExtension();
                 $file_name = rand() . '.' . $file_extension;
                 $path = 'images/face_image';
-                $request->file('face_img')->move(public_path($path), $file_name);
+                $request->file('face_image')->move(public_path($path), $file_name);
                 $product_img = $path . '/' . $file_name;
             }
 
@@ -157,7 +160,7 @@ class ProductController extends Controller
                 'description' => $request->description,
                 'quantity' => $request->quantity,
                 'price' => $request->price,
-                'face_img' => $product_img
+                'face_image' => $product_img
             ]);
 
 
